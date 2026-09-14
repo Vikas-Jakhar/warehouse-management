@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-ink: #10151b;
+  --color-steel: #3a4a5c;
+  --color-steel-light: #64748b;
+  --color-concrete: #edebe6;
+  --color-concrete-dark: #dedad2;
+  --color-card: #ffffff;
+  --color-amber: #d98e2c;
+  --color-amber-soft: #f6e6cc;
+  --color-signal: #2e8b57;
+  --color-signal-soft: #dcefe3;
+  --color-rust: #b4432f;
+  --color-rust-soft: #f5ded9;
+  --color-line: #d3cfc6;
+}
+
+body {
+  background-color: var(--color-concrete);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+}
