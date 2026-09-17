@@ -20,8 +20,11 @@ export interface ApiErrorShape {
   error: { code: number; message: string; details: unknown }
 }
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || '/api/v1'
+
 export const api: AxiosInstance = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
 })
 
 api.interceptors.request.use((config) => {
@@ -38,7 +41,9 @@ async function refreshAccessToken(): Promise<string | null> {
   const refresh = tokenStore.getRefresh()
   if (!refresh) return null
   try {
-    const resp = await axios.post('/api/v1/auth/refresh', { refresh_token: refresh })
+    const resp = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+  refresh_token: refresh,
+})
     const { access_token, refresh_token } = resp.data
     tokenStore.set(access_token, refresh_token)
     return access_token
