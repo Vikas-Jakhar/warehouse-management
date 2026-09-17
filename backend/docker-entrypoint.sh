@@ -24,5 +24,19 @@ PYEOF
 echo "Running migrations..."
 alembic upgrade head
 
+echo "Starting Celery worker..."
+celery -A app.celery_app.celery_app worker --loglevel=info --concurrency=1 &
+CELERY_PID=$!
+
 echo "Starting API server..."
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+API_PID=$!
+
+cleanup() {
+    echo "Stopping services..."
+    kill "$CELERY_PID" "$API_PID" 2>/dev/null || true
+}
+
+trap cleanup SIGTERM SIGINT
+
+wait -n "$CELERY_PID" "$API_PID"
