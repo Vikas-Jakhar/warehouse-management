@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,6 +8,16 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql+psycopg2://warehouse:warehouse@localhost:5432/warehouse_db"
     TEST_DATABASE_URL: str = "postgresql+psycopg2://warehouse:warehouse@localhost:5432/warehouse_test_db"
+
+    @field_validator("DATABASE_URL", "TEST_DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str) -> str:
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+psycopg2://", 1)
+            if v.startswith("postgresql://") and not v.startswith("postgresql+"):
+                return v.replace("postgresql://", "postgresql+psycopg2://", 1)
+        return v
 
     REDIS_URL: str = "redis://localhost:6379/0"
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
