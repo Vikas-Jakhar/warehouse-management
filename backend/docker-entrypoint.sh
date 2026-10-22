@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+export C_FORCE_ROOT=true
+
 echo "Waiting for database..."
 python - <<'PYEOF'
 import time
@@ -31,7 +33,22 @@ alembic upgrade head
 
 PORT="${PORT:-8000}"
 
-echo "Starting Celery worker..."
+echo "Checking Redis availability for background tasks..."
+python - <<'PYEOF'
+import time
+import redis
+from app.core.config import get_settings
+
+settings = get_settings()
+try:
+    r = redis.Redis.from_url(settings.REDIS_URL, socket_timeout=3)
+    r.ping()
+    print("Redis connection verified.")
+except Exception as exc:
+    print(f"Redis not immediately reachable ({exc}); Celery will retry connection on startup.")
+PYEOF
+
+echo "Starting Celery worker in background..."
 celery -A app.celery_app.celery_app worker --loglevel=info --concurrency=1 &
 CELERY_PID=$!
 
@@ -46,4 +63,5 @@ cleanup() {
 
 trap cleanup SIGTERM SIGINT
 
-wait -n "$CELERY_PID" "$API_PID"
+# Keep the container running with the primary API service
+wait "$API_PID"

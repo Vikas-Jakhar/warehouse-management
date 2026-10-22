@@ -18,6 +18,7 @@ celery_app.conf.update(
     enable_utc=True,
     task_always_eager=settings.CELERY_TASK_ALWAYS_EAGER,
     task_eager_propagates=settings.CELERY_TASK_ALWAYS_EAGER,
+    broker_connection_retry_on_startup=True,
 )
 
 # Forecasting (Phase 4) and slotting (Phase 5) tasks.
