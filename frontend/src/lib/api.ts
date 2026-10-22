@@ -20,8 +20,15 @@ export interface ApiErrorShape {
   error: { code: number; message: string; details: unknown }
 }
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || '/api/v1'
+function resolveApiBaseUrl(): string {
+  const raw = (import.meta.env.VITE_API_BASE_URL || '').trim()
+  if (!raw) return '/api/v1'
+  const withProtocol = raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`
+  const normalized = withProtocol.replace(/\/+$/, '')
+  return normalized.endsWith('/api/v1') ? normalized : `${normalized}/api/v1`
+}
+
+const API_BASE_URL = resolveApiBaseUrl()
 
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

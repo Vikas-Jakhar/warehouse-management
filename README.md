@@ -1,5 +1,7 @@
 # Intelligent Warehouse Management & Demand-Driven Inventory Optimization Platform
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Vikas-Jakhar/warehouse-management)
+
 All 7 phases are implemented. See `docs/ARCHITECTURE.md` for the full system design.
 
 ## What's implemented

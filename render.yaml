@@ -15,17 +15,17 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: warehouse-redis
           property: connectionString
       - key: CELERY_BROKER_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: warehouse-redis
           property: connectionString
       - key: CELERY_RESULT_BACKEND
         fromService:
-          type: redis
+          type: keyvalue
           name: warehouse-redis
           property: connectionString
       - key: JWT_SECRET_KEY
@@ -35,8 +35,8 @@ services:
       - key: CORS_ORIGINS
         value: "*"
 
-  # Managed Redis
-  - type: redis
+  # Managed Key Value (Redis/Valkey)
+  - type: keyvalue
     name: warehouse-redis
     ipAllowList: []
     plan: free
@@ -51,11 +51,14 @@ services:
     staticPublishPath: dist
     routes:
       - type: rewrite
-        source: /api/*
-        destination: https://warehouse-backend.onrender.com/api/*
-      - type: rewrite
         source: /*
         destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: warehouse-backend
+          property: host
 
 databases:
   - name: warehouse-db
